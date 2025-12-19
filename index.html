@@ -23,6 +23,7 @@
             text-align: center;
             padding: 20px;
             overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         body.love-mode { background-color: #fff0f3; color: var(--primary); font-family: 'Quicksand', sans-serif; }
@@ -42,14 +43,32 @@
         
         body.love-mode #main-btn, body.love-mode #lock-timer { display: none; }
 
-        .photo-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; width: 100%; max-width: 500px; margin-top: 20px; }
+        /* FIXED PHOTO GRID FOR MOBILE */
+        .photo-grid { 
+            display: none; 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 500px; 
+            margin-top: 20px;
+            padding: 10px; /* This prevents the borders from hitting the screen edge */
+            box-sizing: border-box;
+        }
         body.love-mode .photo-grid { display: grid; animation: fadeIn 2s forwards; }
-        .photo-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .photo-card img { 
+            width: 100%; 
+            height: 140px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            border: 4px solid white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            box-sizing: border-box; /* Ensures border stays inside the image width */
+        }
 
         #cake-area { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
         body.love-mode #cake-area { display: flex; }
         
-        /* SPACING REFINED: 50px is the "Just Right" middle ground */
         .cake { position: relative; width: 180px; height: 120px; margin: 50px auto 10px auto; } 
         
         @keyframes fallIn { 
@@ -92,7 +111,6 @@
             font-weight: bold; cursor: pointer; opacity: 0; transition: 0.3s; 
         }
         body.love-mode .cake-btn { animation: fadeIn 1s forwards 4.2s; }
-        .cake-btn:hover { transform: scale(1.05); }
 
         .flame.lit { opacity: 1; animation: flicker 0.1s infinite alternate; }
         @keyframes flicker { from { transform: translateX(-50%) scale(1); } to { transform: translateX(-50%) scale(1.1); } }
@@ -100,7 +118,6 @@
 
         #status-code { cursor: pointer; }
         #lock-timer { color: var(--secondary); font-size: 1.1rem; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 10px var(--primary); } }
     </style>
 </head>
 <body>
@@ -143,29 +160,23 @@
 
     <script>
         const birthdayDate = new Date("December 20, 2025 00:00:00").getTime();
-
         const timerInterval = setInterval(function() {
             const now = new Date().getTime();
             const distance = birthdayDate - now;
-            const mainBtn = document.getElementById('main-btn');
-            const timerText = document.getElementById('lock-timer');
-
-            if (distance < 0) {
-                unlockSite();
-            } else {
+            if (distance < 0) { unlockSite(); }
+            else {
                 const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const secs = Math.floor((distance % (1000 * 60)) / 1000);
-                timerText.innerText = `Only ${mins}m ${secs}s until your special day...`;
+                document.getElementById('lock-timer').innerText = `Almost time! ${mins}m ${secs}s left...`;
             }
         }, 1000);
 
         function unlockSite() {
             clearInterval(timerInterval);
             const mainBtn = document.getElementById('main-btn');
-            const timerText = document.getElementById('lock-timer');
             mainBtn.disabled = false;
             mainBtn.innerText = "Unlock Your Surprise";
-            timerText.innerText = "Access Granted! Happy Birthday!";
+            document.getElementById('lock-timer').innerText = "Access Granted! Happy Birthday!";
         }
 
         function devBypass() { unlockSite(); }
